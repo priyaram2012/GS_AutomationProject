@@ -5,7 +5,7 @@ export class LoginPage {
     readonly emailInput: Locator;
     readonly passwordInput: Locator;
     readonly loginButton: Locator;
-
+    // constructor
     constructor(page: Page) {
         this.page = page;
         // Updated selectors based on HTML dump
