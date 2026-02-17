@@ -1,80 +1,197 @@
-# Playwright Kanban Automation Framework
+# Playwright Test Framework - Clean Setup
 
-This project is a robust, data-driven automation framework built with Playwright and TypeScript for testing a Kanban application.
+A production-grade Playwright test automation framework using JavaScript.
 
-## 🚀 Features
+## 📁 Project Structure
 
-- **Data-Driven Testing**: Test scenarios are loaded dynamically from `test-data/tasks.json`.
-- **Page Object Model (POM)**: specific classes for Login, Dashboard, and Board interactions.
-- **Cross-Browser & Mobile**: Configured to run on Desktop (Chrome, Firefox, Safari) and Mobile (Pixel 7, iPhone 14).
-- **TypeScript**: Fully typed for better maintainability and code safety.
-
-## 📂 Project Structure
-
-```text
+```
 PlayWright_Automation/
-├── pages/                  # Page Object Models
-│   ├── LoginPage.ts        # Login interactions
-│   ├── DashboardPage.ts    # Dashboard navigation
-│   └── BoardPage.ts        # Kanban board verification logic
-├── tests/                  # Test Specifications
-│   └── kanban.spec.ts      # Main test runner
-├── test-data/              # Data Files
-│   └── tasks.json          # Test case data
-├── utils/                  # Shared utilities
-├── playwright.config.ts    # Playwright configuration
-├── package.json            # Dependencies and scripts
-└── README.md               # Documentation
+├── utils/
+│   ├── baseTest.js           # Custom Playwright test fixture
+│   ├── testConfig.js         # Configuration (credentials, timeouts)
+│   └── testUtils.js          # Helper functions (loginAndSelectBoard)
+│
+├── pages/
+│   ├── BasePage.js           # Base page object (core methods)
+│   ├── LoginPage.js          # Login workflow
+│   └── ProjectBoardPage.js   # Project board interactions
+│
+├── api/
+│   ├── APIClient.js          # HTTP client wrapper
+│   ├── BoardAPI.js           # Board API operations
+│   └── ProjectBoardAPI.js    # Business-level API methods
+│
+├── test/
+│   └── uitest/
+│       ├── testcase1.spec.js # Test Case 1
+│       ├── testcase2.spec.js # Test Case 2
+│       ├── testcase3.spec.js # Test Case 3
+│       ├── testcase4.spec.js # Test Case 4
+│       ├── testcase5.spec.js # Test Case 5
+│       └── testcase6.spec.js # Test Case 6
+│
+├── test-data/
+│   └── tasks.json            # Test data (6 test scenarios)
+│
+├── locators/
+│   └── locators.js           # UI element locators
+│
+├── .vscode/                  # VS Code configuration
+├── playwright.config.js      # Playwright configuration
+├── package.json              # Dependencies and scripts
+├── tsconfig.json             # TypeScript config
+└── jsconfig.json             # JavaScript config
 ```
 
-## 🛠️ Setup
+## 🚀 Quick Start
 
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+### Install Dependencies
+```bash
+npm install
+```
 
-2. **Install Playwright Browsers**
-   ```bash
-   npx playwright install
-   ```
-
-## 🏃 Execution
-
-### Run all tests (Headless)
+### Run All Tests
 ```bash
 npm test
 ```
 
-### Run tests with visible browser (Headed)
+### Run Tests with UI Headless
 ```bash
 npm run test:headed
 ```
 
-### Run mobile tests only
+### Run Smoke Tests
 ```bash
-npm run test:mobile
+npm run test:smoke
 ```
 
-### View HTML Report
+### Run Specific Test
+```bash
+npx playwright test test/uitest/testcase1.spec.js --headed
+```
+
+### View Test Report
 ```bash
 npm run test:report
 ```
 
-## 📊 Test Data
+## 📊 Test Cases
 
-To add new validations, simply edit `test-data/tasks.json`. No code changes are required!
+| Test | Project | Task | Column | Tags |
+|------|---------|------|--------|------|
+| TC1 | - | - | - | Verify board loads |
+| TC2 | Web App | Fix navigation bug | To Do | Bug |
+| TC3 | Web App | Design system updates | In Progress | Design |
+| TC4 | Mobile | Push notification system | To Do | Feature |
+| TC5 | Mobile | Offline mode | In Progress | Feature, High Priority |
+| TC6 | Mobile | App icon design | Done | Design |
 
-Example Entry:
-```json
-{
-  "testCase": "New Test",
-  "application": "Web Application",
-  "task": "New Feature Task",
-  "column": "To Do",
-  "tags": ["Feature"]
-}
+## 🏗️ Framework Architecture
+
+### Layer 1: Shared Test Fixture
+**utils/baseTest.js** - Custom Playwright fixture extending @playwright/test
+
+### Layer 2: Page Object Model
+- **BasePage.js** - Core utilities (navigate, fill, click, waitForBoardLoad)
+- **LoginPage.js** - Login workflow (open, login, isOnLoginPage)
+- **ProjectBoardPage.js** - Board operations (selectProject, findTask, expectTaskInColumn)
+
+### Layer 3: Common Helpers
+**utils/testUtils.js** - `loginAndSelectBoard()` - eliminates login code duplication
+
+### Layer 4: API Testing
+- **APIClient.js** - HTTP wrapper
+- **ProjectBoardAPI.js** - Business-level API methods
+
+## 🔑 Key Features
+
+- ✅ **Zero Code Duplication** - Shared login helper used across all tests
+- ✅ **Page Object Model** - Clean separation of concerns
+- ✅ **Observable Workflows** - Step-by-step console logging
+- ✅ **API + UI Testing** - Scenarios tested at both layers
+- ✅ **Error Handling** - Graceful fallbacks for API failures
+- ✅ **Tagged Tests** - @smoke, @regression tags for selective execution
+
+## 💡 How Tests Work
+
+All tests follow this pattern:
+
+```javascript
+const basePage = await TestUtils.loginAndSelectBoard(
+  page, 
+  username, 
+  password, 
+  'Web Application' // optional: board name
+);
+
+const result = await basePage.expectTaskInColumn(
+  'Fix navigation bug',
+  'To Do',
+  ['Bug']
+);
 ```
 
-## 📝 Demo Recording Logic
-The framework is set to capture traces on the first retry of a failure, and screenshots only on failure. This keeps execution fast while providing debugging info when needed.
+1. **Login & Setup** - Handled by shared helper (single line)
+2. **Test Logic** - Specific to each test case
+3. **Verification** - Asserts expected results
+
+## 🔧 Configuration
+
+### Credentials (utils/testConfig.js)
+- Username: `admin`
+- Password: `password123`
+- Base URL: `https://animated-gingersnap-8cf7f2.netlify.app/`
+
+### Timeouts
+- DEFAULT: 30s
+- NAVIGATION: 20s
+- ELEMENT_WAIT: 15s
+- BOARD_LOAD: 10s
+
+## 📝 Running Tests Programmatically
+
+```javascript
+// Run all tests
+npm test
+
+// Run with specific tag
+npx playwright test --grep "@smoke"
+
+// Run in debug mode
+npm run test:debug
+
+// Run with reporter
+npx playwright test --reporter=html
+```
+
+## ✅ Checklist
+
+- [x] All 6 test cases consolidated
+- [x] Login/navigation code shared (DRY principle)
+- [x] Page Object Model implemented
+- [x] API layer with business methods
+- [x] Test data centralized in tasks.json
+- [x] Error handling and fallbacks
+- [x] Workspace configuration in .vscode/
+- [x] Clean, production-ready structure
+
+## 🎯 For Interviews
+
+This framework demonstrates:
+- Page Object Model best practices
+- DRY principle enforcement (shared helpers)
+- Proper test organization and scalability
+- API and UI testing strategy
+- Error handling and resilience
+- Professional code structure
+
+**Key talking point:** "The `loginAndSelectBoard()` helper replaces 35+ lines of repeated login code. All 6 tests share this, making the framework highly maintainable."
+
+## 🚀 Ready to Run
+
+Everything is configured and ready. Just run:
+```bash
+npm test
+```
+
+Happy testing! 🎉

@@ -1,25 +1,32 @@
 {
   "name": "playwright-kanban-framework",
   "version": "1.0.0",
-  "description": "Scalable Playwright automation framework for Kanban application",
+  "description": "Production-grade Playwright automation framework with API testing and Maven integration",
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
+    "test:all": "playwright test --grep @smoke|@regression|@api",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:api": "playwright test --grep @api",
     "test:headed": "playwright test --headed",
-    "test:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "test:headed:smoke": "playwright test --grep @smoke --headed",
+    "test:headed:regression": "playwright test --grep @regression --headed",
+    "test:headed:api": "playwright test --grep @api --headed",
+    "test:debug": "playwright test --debug",
     "test:report": "playwright show-report"
   },
   "keywords": [
     "playwright",
     "automation",
     "testing",
-    "typescript"
+    "api",
+    "maven"
   ],
   "author": "QA Architect",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.41.0",
-    "@types/node": "^20.11.0",
-    "typescript": "^5.3.3"
+    "@playwright/test": "^1.41.0"
   }
 }
+
